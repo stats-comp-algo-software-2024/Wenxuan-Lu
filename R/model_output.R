@@ -7,7 +7,7 @@
 #' @export
 #'
 coef.hglm <- function(hglm) {
-  warning("The function coef() is not implemented.")
+  return(hglm$coef)
 }
 
 
