@@ -4,12 +4,17 @@
 \alias{hiper_glm}
 \title{High Performance Generalized Linear Model Constructor}
 \usage{
-hiper_glm(design, outcome)
+hiper_glm(design, outcome, model = "linear", option = NULL)
 }
 \arguments{
-\item{design}{matrix, the design matrix containing covariates for the model}
+\item{design}{matrix, the design matrix containing covariates for the model.}
 
-\item{outcome}{vector, the outcome variable for the model}
+\item{outcome}{vector, the outcome variable for the model.}
+
+\item{model}{string, model type, chosen from c('linear'). The default is 'linear'.}
+
+\item{option}{list, an appropriate list of control options. The default is NULL.
+(1) mle_solver: chosen from c('OLS', BFGS'). The default is 'OLS'.}
 }
 \value{
 An object of class 'hglm'.
