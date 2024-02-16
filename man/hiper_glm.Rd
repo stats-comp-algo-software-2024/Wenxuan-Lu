@@ -14,11 +14,11 @@ hiper_glm(design, outcome, model = "linear", option = NULL)
 \item{model}{string, model type, chosen from c('linear'). The default is 'linear'.}
 
 \item{option}{list, an appropriate list of control options. The default is NULL.
-(1) mle_solver: chosen from c('OLS', BFGS'). The default is 'OLS'.}
+(1) mle_solver: chosen from c('OLS', 'BFGS'). The default is 'OLS'.}
 }
 \value{
-An object of class 'hglm'.
+An object of class hglm.
 }
 \description{
-This function creates a high performance GLM model.
+This function creates and fits a high performance GLM model.
 }

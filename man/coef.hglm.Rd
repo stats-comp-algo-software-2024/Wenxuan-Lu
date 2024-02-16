@@ -7,7 +7,10 @@
 \method{coef}{hglm}(hglm)
 }
 \arguments{
-\item{hglm}{object, an object of class 'hglm'.}
+\item{hglm}{object, an object of class hglm.}
+}
+\value{
+A vector of regression coefficients.
 }
 \description{
 This function extracts the coefficients from a hglm model.

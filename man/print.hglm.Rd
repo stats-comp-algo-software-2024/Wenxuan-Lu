@@ -7,7 +7,7 @@
 \method{print}{hglm}(hglm)
 }
 \arguments{
-\item{hglm}{object, an object of class 'hglm'.}
+\item{hglm}{object, an object of class hglm.}
 }
 \description{
 Displays the hglm object.

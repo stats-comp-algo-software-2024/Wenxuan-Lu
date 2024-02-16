@@ -7,8 +7,8 @@
 \method{vcov}{hglm}(hglm)
 }
 \arguments{
-\item{hglm}{object, an object of class 'hglm'.}
+\item{hglm}{object, an object of class hglm.}
 }
 \description{
-Variance-Covariance Matrix Calculation
+This function extracts the variance-covariance matrix from a hglm model.
 }
