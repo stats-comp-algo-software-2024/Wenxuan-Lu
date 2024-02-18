@@ -17,6 +17,18 @@ approx_grad_via_finite_diff <- function(func, x, dx = 1e-06) {
   return(numerical_grad)
 }
 
+approx_hessian_via_finite_diff <- function(func, x, dx = 1e-06) {
+  numerical_hessian <- matrix(0, length(x), length(x))
+  for (i in 1:length(x)) {
+    x_plus <- x
+    x_plus[i] <- x[i] + dx
+    x_minus <- x
+    x_minus[i] <- x[i] - dx
+    numerical_hessian[,i] <- (func(x_plus) - func(x_minus))/(2 * dx)
+  }
+  return(numerical_hessian)
+}
+
 simulate_data <- function(n_obs, n_pred, model = "linear", intercept = NULL, coef_true = NULL, design = NULL,
   seed = NULL, option = list()) {
   if (!is.null(seed)) {
@@ -62,3 +74,4 @@ simulate_data <- function(n_obs, n_pred, model = "linear", intercept = NULL, coe
   }
   return(list(design = design, outcome = outcome, coef_true = coef_true))
 }
+
