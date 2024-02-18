@@ -1,17 +1,37 @@
-are_all_close <- function(v, w, abs_tol = 1e-06, rel_tol = 1e-06) {
+are_all_close <- function(v, w, abs_tol = 1e-6, rel_tol = 1e-6) {
   abs_diff <- abs(v - w)
   are_all_within_atol <- all(abs_diff < abs_tol)
   are_all_within_rtol <- all(abs_diff < rel_tol * pmax(abs(v), abs(w)))
   return(are_all_within_atol && are_all_within_rtol)
 }
 
-simulate_data <- function(n_obs, n_pred, model = "linear", intercept = NULL, coef_true = NULL, design = NULL,
-  seed = NULL, signal_to_noise = 0.1) {
+approx_grad_via_finite_diff <- function(func, x, dx = 1e-6) {
+  numerical_grad <- rep(0, length(x))
+  for (i in 1:length(x)) {
+    x_plus <- x
+    x_plus[i] <- x[i] + dx
+    x_minus <- x
+    x_minus[i] <- x[i] - dx
+    numerical_grad[i] <- (func(x_plus) - func(x_minus)) / (2 * dx)
+  }
+  return(numerical_grad)
+}
+
+simulate_data <- function(
+    n_obs, n_pred, model = "linear", intercept = NULL,
+    coef_true = NULL, design = NULL, seed = NULL, option = list()
+) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
+  if ((model != "linear")  && !is.null(option$signal_to_noise)) {
+    warning(paste(
+      "The `signal_to_noise` option is currently unsupported for",
+      "non-linear models and will be ignored."
+    ))
+  }
   if (is.null(coef_true)) {
-    coef_true <- rnorm(n_pred, sd = 1/sqrt(n_pred))
+    coef_true <- rnorm(n_pred, sd = 1 / sqrt(n_pred))
   }
   if (is.null(design)) {
     design <- matrix(rnorm(n_obs * n_pred), nrow = n_obs, ncol = n_pred)
@@ -24,20 +44,26 @@ simulate_data <- function(n_obs, n_pred, model = "linear", intercept = NULL, coe
     design <- cbind(rep(1, n_obs), design)
   }
   expected_mean <- as.vector(design %*% coef_true)
-  noise_magnitude <- sqrt(var(expected_mean)/signal_to_noise^2)
-  noise <- noise_magnitude * rnorm(n_obs)
-  outcome <- expected_mean + noise
-  return(list(design = design, outcome = outcome, coef_true = coef_true))
-}
-
-approx_grad <- function(func, x, dx = .Machine$double.eps^(1/3)) {
-  numerical_grad <- rep(0, length(x))
-  for (i in 1:length(x)) {
-    plus_dx <- x
-    plus_dx[i] <- plus_dx[i] + dx
-    minus_dx <- x
-    minus_dx[i] <- minus_dx[i] - dx
-    numerical_grad[i] <- (func(plus_dx) - func(minus_dx))/(2 * dx)
+  if (model == 'linear') {
+    signal_to_noise <- option$signal_to_noise
+    if (is.null(signal_to_noise)) {
+      signal_to_noise <- 0.1
+    }
+    noise_magnitude <- sqrt(var(expected_mean) / signal_to_noise^2)
+    noise <- noise_magnitude * rnorm(n_obs)
+    outcome <- expected_mean + noise
+  } else {
+    n_trial <- option$n_trial
+    prob <- 1 / (1 + exp(-expected_mean))
+    # Object type of `outcome` returned by this function is variable. One should
+    # in general be careful about introducing this type of inconsistency, but
+    # sometimes one might find it the most natural and/or reasonable thing to do.
+    if (is.null(n_trial)) {
+      outcome <- rbinom(n_obs, 1, prob)
+    } else {
+      n_success <- rbinom(n_obs, n_trial, prob)
+      outcome <- list(n_success = n_success, n_trial = n_trial)
+    }
   }
-  return(numerical_grad)
+  return(list(design = design, outcome = outcome, coef_true = coef_true))
 }
