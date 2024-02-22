@@ -25,13 +25,27 @@ find_mle_bfgs_logit <- function(design, outcome) {
 #' @return A vector of logistic regression coefficients.
 #'
 find_mle_newton_logit <- function(design, outcome) {
+  abs_tol <- qchisq(0.05, df = 1)/2
+  rel_tol <- abs_tol
+  max_iter <- 100
   n_pred <- ncol(design)
   regression_coef <- rep(0, n_pred)
-  max_iter <- 100
-  for (i in 1:max_iter) {
+  prev_log_likelihood <- log_likelihood_func_logit(regression_coef, design, outcome)
+  iter_num <- 1
+  while (iter_num <= max_iter) {
     grad <- log_likelihood_gradient_logit(regression_coef, design, outcome)
     hess <- log_likelihood_hessian_logit(regression_coef, design, outcome)
     regression_coef <- regression_coef - solve(hess, grad)
+    curr_log_likelihood <- log_likelihood_func_logit(regression_coef, design, outcome)
+    abs_diff <- abs(curr_log_likelihood - prev_log_likelihood)
+    if (abs_diff < abs_tol && abs_diff < rel_tol * max(abs(curr_log_likelihood), abs(prev_log_likelihood))) {
+      break
+    }
+    prev_log_likelihood <- curr_log_likelihood
+    iter_num <- iter_num + 1
+  }
+  if (iter_num > max_iter) {
+    warning("Model convergence problem: Newton's method did not converge.")
   }
   return(regression_coef)
 }
@@ -89,7 +103,7 @@ log_likelihood_hessian_logit <- function(regression_coef, design, outcome) {
 
 #' Logistic Function
 #'
-#' @param x numeric vector, the position to be evaluated on.
+#' @param x numeric vector, the point to be evaluated on.
 #'
 #' @return A numeric vector of logistic function values.
 #'

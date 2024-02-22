@@ -17,5 +17,5 @@ test_that("newton and bfgs outputs coincide on logit model", {
   outcome <- data$outcome
   via_newton_out <- hiper_glm(design, outcome, model = "logit")
   via_bfgs_out <- hiper_glm(design, outcome, model = "logit", option = list(mle_solver = "BFGS"))
-  expect_true(are_all_close(coef(via_newton_out), coef(via_bfgs_out), abs_tol = 0.01, rel_tol = 0.01))
+  expect_true(are_all_close(coef(via_newton_out), coef(via_bfgs_out), abs_tol = 0.001, rel_tol = 0.001))
 })

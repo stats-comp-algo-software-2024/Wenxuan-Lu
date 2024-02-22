@@ -24,7 +24,7 @@ approx_hessian_via_finite_diff <- function(func, x, dx = 1e-06) {
     x_plus[i] <- x[i] + dx
     x_minus <- x
     x_minus[i] <- x[i] - dx
-    numerical_hessian[,i] <- (func(x_plus) - func(x_minus))/(2 * dx)
+    numerical_hessian[, i] <- (func(x_plus) - func(x_minus))/(2 * dx)
   }
   return(numerical_hessian)
 }
@@ -62,9 +62,9 @@ simulate_data <- function(n_obs, n_pred, model = "linear", intercept = NULL, coe
   } else {
     n_trial <- option$n_trial
     prob <- 1/(1 + exp(-expected_mean))
-    # Object type of `outcome` returned by this function is variable. One should in general be
-    # careful about introducing this type of inconsistency, but sometimes one might find it the most
-    # natural and/or reasonable thing to do.
+    # Object type of `outcome` returned by this function is variable. One should in general be careful about
+    # introducing this type of inconsistency, but sometimes one might find it the most natural and/or
+    # reasonable thing to do.
     if (is.null(n_trial)) {
       outcome <- rbinom(n_obs, 1, prob)
     } else {

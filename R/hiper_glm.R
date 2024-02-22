@@ -4,7 +4,7 @@
 #'
 #' @param design matrix, the design matrix containing covariates for the model.
 #' @param outcome vector, the outcome variable for the model.
-#' @param model string, model type, chosen from c('linear', 'logit'). The default is 'linear'. The 'logit' option assumes the outcomes to be binary.
+#' @param model string, model type, chosen from c('linear', 'logit'). The default is 'linear'. The 'logit' option assumes binary outcomes.
 #' @param option list, an appropriate list of control options. The default is NULL.
 #' For a linear model,
 #' (1) mle_solver: chosen from c('OLS', 'BFGS'). The default is 'OLS'.
